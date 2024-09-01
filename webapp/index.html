@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoring Dashboard</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io();
+            socket.on('update', (data) => {
+                console.log(data);
+                document.getElementById('producer-count').textContent = data.producer_count;
+                document.getElementById('consumer-count').textContent = data.consumer_count;
+                document.getElementById('sqs-message-count').textContent = data.sqs_message_count;
+                document.getElementById("sleep-time").textContent = data.sleep_time;
+                document.getElementById("wait-time").textContent = data.wait_time;
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Monitoring Dashboard</h1>
+
+    <h2>Instances</h2>
+    <p>Number of Producer Instances: <span id="producer-count">{{ producer_count }}</span></p>
+    <p>Number of Consumer Instances: <span id="consumer-count">{{ consumer_count }}</span></p>
+    <p>Estimated Number of Messages in SQS Queue: <span id="sqs-message-count">{{ sqs_message_count }}</span></p>
+
+    <h2>Current Producer configurations</h2>
+    <p>Producer wait time before sending another action: <span id="wait-time">{{ wait_time }}</span></p>
+    <p>Consumer sleep time before consuming another SQS message: <span id="sleep-time">{{ sleep_time }}</span></p>
+
+    <h2>Update SSM Parameters</h2>
+    <form method="post">
+        <label for="wait_time">Producer wait time:</label>
+        <input type="text" id="wait-time" name="wait_time" value=""><br>
+        <label for="sleep_time">Consumer sleep time:</label>
+        <input type="text" id="sleep-time" name="sleep_time" value=""><br>
+        <button type="submit">Update</button>
+    </form>
+</body>
+
+</html>
